@@ -157,46 +157,39 @@
     function formatNum(n) { return n.toLocaleString(); }
 
     function calculate() {
-      let hs = parseFloat(el("hatchSpeed").value);
-      let ec = parseFloat(el("eggCost").value);
-      let c = parseFloat(el("coins").value);
-      let ephh = parseFloat(el("eggsPerHatch").value);
-      let hAFK = parseFloat(el("hoursAFK").value);
+  let hs = parseFloat(el("hatchSpeed").value);
+  let ec = parseFloat(el("eggCost").value);
+  let c = parseFloat(el("coins").value);
+  let ephh = parseFloat(el("eggsPerHatch").value);
+  let hAFK = parseFloat(el("hoursAFK").value);
 
-      let eps = ephh / hs;
-      let eph = eps * 3600;
-      let tEggs = eph * hAFK;
-      let tCost = tEggs * ec;
+  let eps = ephh / hs;
+  let eph = eps * 3600;
+  let tEggs = eph * hAFK;
+  let tCost = tEggs * ec;
 
-      let msg = "Eggs/sec: " + eps.toFixed(2) +
-                "
-Eggs/hour: " + formatNum(Math.floor(eph)) +
-                "
-Total eggs: " + formatNum(Math.floor(tEggs)) +
-                "
-Total cost: " + formatNum(Math.floor(tCost));
+  let msg =
+    "Eggs/sec: " + eps.toFixed(2) + "\n" +
+    "Eggs/hour: " + formatNum(Math.floor(eph)) + "\n" +
+    "Total eggs: " + formatNum(Math.floor(tEggs)) + "\n" +
+    "Total cost: " + formatNum(Math.floor(tCost));
 
-      let exportTxt = msg;
+  let exportTxt = msg;
 
-      if (tCost <= c) {
-        let hoursLast = c / (eph * ec);
-        msg += "
+  let hoursLast = c / (eph * ec);
 
-✔ You have enough!" +
-               "
-You can AFK for " + hoursLast.toFixed(2) + " hours.";
-        exportTxt += "
-You can AFK for: " + hoursLast.toFixed(2) + " hours.";
-      } else {
-        let hoursLast = c / (eph * ec);
-        msg += "
+  if (tCost <= c) {
+    msg += "\n\n✔ You have enough!\nYou can AFK for " + hoursLast.toFixed(2) + " hours.";
+    exportTxt += "\nYou can AFK for: " + hoursLast.toFixed(2) + " hours.";
+  } else {
+    msg += "\n\n❌ Not enough.\nYou run out after " + hoursLast.toFixed(2) + " hours.";
+    exportTxt += "\nRuns out after: " + hoursLast.toFixed(2) + " hours.";
+  }
 
-❌ Not enough." +
-               "
-You run out after " + hoursLast.toFixed(2) + " hours.";
-        exportTxt += "
-Runs out after: " + hoursLast.toFixed(2) + " hours.";
-      }
+  lastExport = exportTxt;
+  el("output").innerText = msg;
+  el("output").classList.add("show");
+}
 
       lastExport = exportTxt;
       el("output").innerText = msg;
