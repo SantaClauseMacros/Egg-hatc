@@ -1,232 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AFK Hatch Calculator</title>
-  <style>
-    :root {
-      --bg: #050505;
-      --card: #0f0f0f;
-      --text: #fff;
-      --accent: #00ffcc;
-      --gradient: linear-gradient(135deg, #00f6ff, #00ff99, #00bbff);
-    }
-    body.light {
-      --bg: #eaeaea;
-      --card: #ffffff;
-      --text: #000;
-      --accent: #00b899;
-      --gradient: linear-gradient(135deg, #00e0ff, #00ff99);
-    }
+<meta charset="UTF-8">
+<title>Hatch Time Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
     body {
-      font-family: Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      transition: 0.4s;
+        margin: 0;
+        font-family: Poppins, sans-serif;
+        background: radial-gradient(circle at top, #0a0a0a, #000000);
+        color: white;
+        overflow-x: hidden;
+        transition: background 0.3s, color 0.3s;
     }
+
+    .light {
+        background: linear-gradient(to bottom, #ffffff, #e3e3e3);
+        color: #111;
+    }
+
+    header {
+        text-align: center;
+        padding: 40px 20px;
+        animation: fadeDown 1s ease forwards;
+    }
+
+    header h1 {
+        font-size: 2.5rem;
+        background: linear-gradient(90deg, #ff00ea, #00eaff);
+        -webkit-background-clip: text;
+        color: transparent;
+    }
+
+    header p {
+        opacity: 0.8;
+    }
+
+    @keyframes fadeDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
     .container {
-      background: var(--card);
-      padding: 20px;
-      border-radius: 18px;
-      width: 90%;
-      max-width: 380px;
-      box-shadow: 0 0 25px rgba(0,255,200,0.2);
-      animation: slideIn 0.6s ease forwards;
+        max-width: 500px;
+        margin: auto;
+        padding: 20px;
+        animation: slideIn 0.8s ease forwards;
     }
+
     @keyframes slideIn {
-      from { transform: translateY(40px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+        from { opacity: 0; transform: translateX(40px); }
+        to { opacity: 1; transform: translateX(0); }
     }
+
+    .card {
+        background: rgba(255,255,255,0.05);
+        padding: 20px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 20px #00ffff33;
+        border: 1px solid #ffffff10;
+        animation: popIn 0.6s ease;
+    }
+
+    @keyframes popIn {
+        from { transform: scale(0.95); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    label {
+        display: block;
+        margin-top: 15px;
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
     input {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: none;
-      font-size: 15px;
+        width: 100%;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        margin-top: 5px;
+        font-size: 1rem;
     }
+
     button {
-      width: 100%;
-      padding: 12px;
-      background: var(--gradient);
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      color: #000;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: 0.2s;
-      font-weight: bold;
+        width: 100%;
+        padding: 12px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #00eaff, #ff00ea);
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: 0.2s;
+        box-shadow: 0 0 10px #00f0ff;
     }
+
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,255,200,0.3);
+        transform: scale(1.03);
     }
-    #output {
-      margin-top: 15px;
-      background: rgba(255,255,255,0.05);
-      padding: 15px;
-      border-radius: 12px;
-      white-space: pre-line;
-      min-height: 60px;
-      backdrop-filter: blur(8px);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: 0.3s ease;
+
+    .result {
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 15px;
+        background: rgba(0,255,255,0.1);
+        border: 1px solid #00ffff44;
+        display: none;
+        animation: slideUp 0.5s ease forwards;
     }
-    #output.show {
-      opacity: 1;
-      transform: translateY(0);
-      box-shadow: 0 0 15px rgba(0,255,200,0.2);
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-    .top-buttons {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
+
+    .top-controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
     }
+
     .small-btn {
-      padding: 6px 10px;
-      background: var(--gradient);
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      color: #000;
-      font-size: 13px;
-      font-weight: bold;
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        background: #ffffff15;
+        border-radius: 8px;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
     }
-    .copyBox {
-      margin-top: 10px;
-      background: rgba(0,0,0,0.25);
-      padding: 10px;
-      border-radius: 8px;
-      font-size: 13px;
-      white-space: pre-line;
-    }
-  .hero { text-align:center; padding:40px 20px; background:linear-gradient(135deg,#ff00cc,#3333ff); border-bottom:3px solid rgba(255,255,255,0.2); }
-.hero-title { font-size:2.5rem; font-weight:800; text-shadow:0 0 15px rgba(255,255,255,0.6); }
-.hero-sub { font-size:1.1rem; opacity:0.9; margin-top:10px; }
-.container { backdrop-filter: blur(12px); border:2px solid rgba(255,255,255,0.15); box-shadow:0 0 25px rgba(0,0,0,0.35); }
-.button:hover { transform:scale(1.05) translateY(-2px); }
-.result-box { border:2px solid rgba(255,255,255,0.25); box-shadow:0 0 25px rgba(0,255,170,0.25); }
 </style>
 </head>
+
 <body>
-    <header class="hero">
-      <h1 class="hero-title">AFK Hatch Calculator</h1>
-      <p class="hero-sub">Calculate how long you can hatch based on your coins, egg price, hatch speed, and eggs per open.</p>
-    </header>
-  <div class="container">
-    <div class="top-buttons">
-      <button class="small-btn" onclick="savePreset()">Save</button>
-      <button class="small-btn" onclick="loadPreset()">Load</button>
-      <button class="small-btn" onclick="toggleTheme()">Theme</button>
+
+<header>
+    <h1>Hatch Time Calculator</h1>
+    <p>Calculate how long you can AFK hatch based on coins, speed, and eggs per open.</p>
+</header>
+
+<div class="container">
+    <div class="top-controls">
+        <div class="small-btn" onclick="toggleTheme()">🌙 / ☀️</div>
+        <div class="small-btn" onclick="savePreset()">Save Preset</div>
+        <div class="small-btn" onclick="loadPreset()">Load Preset</div>
     </div>
 
-    <h2 style="text-align:center;">AFK Hatch Calculator</h2>
+    <div class="card">
+        <label>Hatch Speed (seconds per open)</label>
+        <input id="speed" type="number" step="0.01">
 
-    <label>Seconds per hatch</label>
-    <input id="hatchSpeed" type="number" step="0.01" value="0.6">
+        <label>Egg Cost</label>
+        <input id="eggCost" type="number">
 
-    <label>Egg cost</label>
-    <input id="eggCost" type="number" value="800">
+        <label>Coins You Have</label>
+        <input id="coins" type="number">
 
-    <label>Your coins</label>
-    <input id="coins" type="number" value="200000000">
+        <label>Eggs Per Open</label>
+        <input id="eggsPer" type="number">
 
-    <label>Eggs per hatch</label>
-    <input id="eggsPerHatch" type="number" value="16">
+        <button onclick="calculate()">Calculate</button>
 
-    <label>Hours AFK</label>
-    <input id="hoursAFK" type="number" value="8">
+        <div class="result" id="result"></div>
+        <button style="display:none" id="copyBtn" onclick="copyExport()">Copy Export</button>
+    </div>
+</div>
 
-    <button onclick="calculate()">Calculate</button>
-    <div id="output"></div>
-    <button class="small-btn" onclick="copyResult()" style="margin-top:10px;width:100%;">Copy Results</button>
-  </div>
+<script>
+function calculate() {
+    let speed = parseFloat(document.getElementById("speed").value);
+    let eggCost = parseFloat(document.getElementById("eggCost").value);
+    let coins = parseFloat(document.getElementById("coins").value);
+    let eggsPer = parseFloat(document.getElementById("eggsPer").value);
 
-  <script>
-    let lastExport = "";
+    if (!speed || !eggCost || !coins || !eggsPer) {
+        alert("Fill every input!");
+        return;
+    }
 
-    function el(id) { return document.getElementById(id); }
-    function formatNum(n) { return n.toLocaleString(); }
+    let costPerOpen = eggCost * eggsPer;
+    let totalOpens = Math.floor(coins / costPerOpen);
+    let totalSeconds = totalOpens * speed;
+    let totalHours = (totalSeconds / 3600).toFixed(2);
 
-    function calculate() {
-  let hs = parseFloat(el("hatchSpeed").value);
-  let ec = parseFloat(el("eggCost").value);
-  let c = parseFloat(el("coins").value);
-  let ephh = parseFloat(el("eggsPerHatch").value);
-  let hAFK = parseFloat(el("hoursAFK").value);
+    let exportText = `
+Hatch Speed: ${speed}s
+Egg Cost: ${eggCost}
+Eggs Per Open: ${eggsPer}
+Coins: ${coins}
 
-  let eps = ephh / hs;
-  let eph = eps * 3600;
-  let tEggs = eph * hAFK;
-  let tCost = tEggs * ec;
+You can hatch for: ${totalHours} hours
+Total Opens: ${totalOpens}
+`;
 
-  let msg =
-    "Eggs/sec: " + eps.toFixed(2) + "\n" +
-    "Eggs/hour: " + formatNum(Math.floor(eph)) + "\n" +
-    "Total eggs: " + formatNum(Math.floor(tEggs)) + "\n" +
-    "Total cost: " + formatNum(Math.floor(tCost));
+    document.getElementById("result").innerHTML = `
+        <h2 style="margin-top:0">Results</h2>
+        <p><b>Total Opens:</b> ${totalOpens.toLocaleString()}</p>
+        <p><b>Total Time:</b> ${totalHours} hours</p>
+        <p><b>Cost Per Open:</b> ${costPerOpen.toLocaleString()}</p>
+    `;
 
-  let exportTxt = msg;
+    document.getElementById("result").style.display = "block";
 
-  let hoursLast = c / (eph * ec);
-
-  if (tCost <= c) {
-    msg += "\n\n✔ You have enough!\nYou can AFK for " + hoursLast.toFixed(2) + " hours.";
-    exportTxt += "\nYou can AFK for: " + hoursLast.toFixed(2) + " hours.";
-  } else {
-    msg += "\n\n❌ Not enough.\nYou run out after " + hoursLast.toFixed(2) + " hours.";
-    exportTxt += "\nRuns out after: " + hoursLast.toFixed(2) + " hours.";
-  }
-
-  lastExport = exportTxt;
-  el("output").innerText = msg;
-  el("output").classList.add("show");
+    window.exportData = exportText;
+    document.getElementById("copyBtn").style.display = "block";
 }
 
-      lastExport = exportTxt;
-      el("output").innerText = msg;
-      el("output").classList.add("show");
-    }
+function copyExport() {
+    navigator.clipboard.writeText(window.exportData);
+    alert("Copied!");
+}
 
-    function copyResult() {
-      navigator.clipboard.writeText(lastExport);
-      alert("Copied to clipboard!");
-    }
+function toggleTheme() {
+    document.body.classList.toggle("light");
+}
 
-    function savePreset() {
-      let preset = {
-        hs: el("hatchSpeed").value,
-        ec: el("eggCost").value,
-        c: el("coins").value,
-        eph: el("eggsPerHatch").value,
-        h: el("hoursAFK").value
-      };
-      localStorage.setItem("afkPreset", JSON.stringify(preset));
-      alert("Preset saved!");
-    }
+function savePreset() {
+    localStorage.setItem("speed", document.getElementById("speed").value);
+    localStorage.setItem("eggCost", document.getElementById("eggCost").value);
+    localStorage.setItem("coins", document.getElementById("coins").value);
+    localStorage.setItem("eggsPer", document.getElementById("eggsPer").value);
+    alert("Preset Saved!");
+}
 
-    function loadPreset() {
-      let p = JSON.parse(localStorage.getItem("afkPreset"));
-      if (!p) return alert("No preset saved!");
-      el("hatchSpeed").value = p.hs;
-      el("eggCost").value = p.ec;
-      el("coins").value = p.c;
-      el("eggsPerHatch").value = p.eph;
-      el("hoursAFK").value = p.h;
-      alert("Preset loaded!");
-    }
+function loadPreset() {
+    document.getElementById("speed").value = localStorage.getItem("speed") || "";
+    document.getElementById("eggCost").value = localStorage.getItem("eggCost") || "";
+    document.getElementById("coins").value = localStorage.getItem("coins") || "";
+    document.getElementById("eggsPer").value = localStorage.getItem("eggsPer") || "";
+}
+</script>
 
-    function toggleTheme() {
-      document.body.classList.toggle("light");
-    }
-  </script>
 </body>
 </html>
