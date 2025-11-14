@@ -6,16 +6,18 @@
   <title>AFK Hatch Calculator</title>
   <style>
     :root {
-      --bg: #111;
-      --card: #1a1a1a;
+      --bg: #050505;
+      --card: #0f0f0f;
       --text: #fff;
-      --accent: #4caf50;
+      --accent: #00ffcc;
+      --gradient: linear-gradient(135deg, #00f6ff, #00ff99, #00bbff);
     }
     body.light {
-      --bg: #f0f0f0;
+      --bg: #eaeaea;
       --card: #ffffff;
       --text: #000;
-      --accent: #3d8f40;
+      --accent: #00b899;
+      --gradient: linear-gradient(135deg, #00e0ff, #00ff99);
     }
     body {
       font-family: Arial, sans-serif;
@@ -26,52 +28,62 @@
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      transition: background 0.3s, color 0.3s;
+      transition: 0.4s;
     }
     .container {
       background: var(--card);
       padding: 20px;
-      border-radius: 16px;
+      border-radius: 18px;
       width: 90%;
-      max-width: 360px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-      animation: popIn 0.4s ease;
+      max-width: 380px;
+      box-shadow: 0 0 25px rgba(0,255,200,0.2);
+      animation: slideIn 0.6s ease forwards;
     }
-    @keyframes popIn {
-      from { transform: scale(0.9); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    @keyframes slideIn {
+      from { transform: translateY(40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
     input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin: 8px 0;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       font-size: 15px;
     }
     button {
       width: 100%;
       padding: 12px;
-      background: var(--accent);
+      background: var(--gradient);
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 16px;
-      color: white;
+      color: #000;
       cursor: pointer;
       margin-top: 12px;
       transition: 0.2s;
+      font-weight: bold;
     }
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 12px rgba(0,255,200,0.3);
     }
     #output {
       margin-top: 15px;
-      background: rgba(0,0,0,0.2);
-      padding: 12px;
-      border-radius: 8px;
+      background: rgba(255,255,255,0.05);
+      padding: 15px;
+      border-radius: 12px;
       white-space: pre-line;
-      min-height: 50px;
+      min-height: 60px;
+      backdrop-filter: blur(8px);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: 0.3s ease;
+    }
+    #output.show {
+      opacity: 1;
+      transform: translateY(0);
+      box-shadow: 0 0 15px rgba(0,255,200,0.2);
     }
     .top-buttons {
       display: flex;
@@ -80,21 +92,30 @@
     }
     .small-btn {
       padding: 6px 10px;
-      background: var(--accent);
+      background: var(--gradient);
       border: none;
       border-radius: 6px;
       cursor: pointer;
-      color: #fff;
+      color: #000;
       font-size: 13px;
+      font-weight: bold;
+    }
+    .copyBox {
+      margin-top: 10px;
+      background: rgba(0,0,0,0.25);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      white-space: pre-line;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="top-buttons">
-      <button class="small-btn" onclick="savePreset()">Save Preset</button>
-      <button class="small-btn" onclick="loadPreset()">Load Preset</button>
-      <button class="small-btn" onclick="toggleTheme()">Light/Dark</button>
+      <button class="small-btn" onclick="savePreset()">Save</button>
+      <button class="small-btn" onclick="loadPreset()">Load</button>
+      <button class="small-btn" onclick="toggleTheme()">Theme</button>
     </div>
 
     <h2 style="text-align:center;">AFK Hatch Calculator</h2>
@@ -116,58 +137,86 @@
 
     <button onclick="calculate()">Calculate</button>
     <div id="output"></div>
+    <button class="small-btn" onclick="copyResult()" style="margin-top:10px;width:100%;">Copy Results</button>
   </div>
 
   <script>
+    let lastExport = "";
+
     function formatNum(n) { return n.toLocaleString(); }
 
     function calculate() {
-      let hatchSpeed = parseFloat(hatchSpeed.value);
-      let eggCost = parseFloat(eggCost.value);
-      let coins_ = parseFloat(coins.value);
-      let eggsPerHatch = parseFloat(eggsPerHatch.value);
-      let hoursAFK = parseFloat(hoursAFK.value);
+      let hs = parseFloat(hatchSpeed.value);
+      let ec = parseFloat(eggCost.value);
+      let c = parseFloat(coins.value);
+      let ephh = parseFloat(eggsPerHatch.value);
+      let hAFK = parseFloat(hoursAFK.value);
 
-      let eps = eggsPerHatch / hatchSpeed;
+      let eps = ephh / hs;
       let eph = eps * 3600;
-      let totalEggs = eph * hoursAFK;
-      let totalCost = totalEggs * eggCost;
+      let tEggs = eph * hAFK;
+      let tCost = tEggs * ec;
 
-      let text = "Eggs/sec: " + eps.toFixed(2) +
-                 "\nEggs/hour: " + formatNum(eph) +
-                 "\nTotal eggs: " + formatNum(totalEggs) +
-                 "\nTotal cost: " + formatNum(totalCost);
+      let msg = "Eggs/sec: " + eps.toFixed(2) +
+                "
+Eggs/hour: " + formatNum(Math.floor(eph)) +
+                "
+Total eggs: " + formatNum(Math.floor(tEggs)) +
+                "
+Total cost: " + formatNum(Math.floor(tCost));
 
-      if (totalCost <= coins_) {
-        let h = coins_ / (eph * eggCost);
-        text += "\n\n✔ You have enough!" + "\nYou can AFK for " + h.toFixed(2) + " hours.";
+      let exportTxt = msg;
+
+      if (tCost <= c) {
+        let hoursLast = c / (eph * ec);
+        msg += "
+
+✔ You have enough!" +
+               "
+You can AFK for " + hoursLast.toFixed(2) + " hours.";
+        exportTxt += "
+You can AFK for: " + hoursLast.toFixed(2) + " hours.";
       } else {
-        let h = coins_ / (eph * eggCost);
-        text += "\n\n❌ Not enough." + "\nYou run out after " + h.toFixed(2) + " hours.";
+        let hoursLast = c / (eph * ec);
+        msg += "
+
+❌ Not enough." +
+               "
+You run out after " + hoursLast.toFixed(2) + " hours.";
+        exportTxt += "
+Runs out after: " + hoursLast.toFixed(2) + " hours.";
       }
-      output.innerText = text;
+
+      lastExport = exportTxt;
+      output.innerText = msg;
+      output.classList.add("show");
+    }
+
+    function copyResult() {
+      navigator.clipboard.writeText(lastExport);
+      alert("Copied to clipboard!");
     }
 
     function savePreset() {
       let preset = {
-        hatchSpeed: hatchSpeed.value,
-        eggCost: eggCost.value,
-        coins: coins.value,
-        eggsPerHatch: eggsPerHatch.value,
-        hoursAFK: hoursAFK.value
+        hs: hatchSpeed.value,
+        ec: eggCost.value,
+        c: coins.value,
+        eph: eggsPerHatch.value,
+        h: hoursAFK.value
       };
       localStorage.setItem("afkPreset", JSON.stringify(preset));
       alert("Preset saved!");
     }
 
     function loadPreset() {
-      let preset = JSON.parse(localStorage.getItem("afkPreset"));
-      if (!preset) return alert("No preset saved yet!");
-      hatchSpeed.value = preset.hatchSpeed;
-      eggCost.value = preset.eggCost;
-      coins.value = preset.coins;
-      eggsPerHatch.value = preset.eggsPerHatch;
-      hoursAFK.value = preset.hoursAFK;
+      let p = JSON.parse(localStorage.getItem("afkPreset"));
+      if (!p) return alert("No preset saved!");
+      hatchSpeed.value = p.hs;
+      eggCost.value = p.ec;
+      coins.value = p.c;
+      eggsPerHatch.value = p.eph;
+      hoursAFK.value = p.h;
       alert("Preset loaded!");
     }
 
