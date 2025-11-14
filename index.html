@@ -108,9 +108,19 @@
       font-size: 13px;
       white-space: pre-line;
     }
-  </style>
+  .hero { text-align:center; padding:40px 20px; background:linear-gradient(135deg,#ff00cc,#3333ff); border-bottom:3px solid rgba(255,255,255,0.2); }
+.hero-title { font-size:2.5rem; font-weight:800; text-shadow:0 0 15px rgba(255,255,255,0.6); }
+.hero-sub { font-size:1.1rem; opacity:0.9; margin-top:10px; }
+.container { backdrop-filter: blur(12px); border:2px solid rgba(255,255,255,0.15); box-shadow:0 0 25px rgba(0,0,0,0.35); }
+.button:hover { transform:scale(1.05) translateY(-2px); }
+.result-box { border:2px solid rgba(255,255,255,0.25); box-shadow:0 0 25px rgba(0,255,170,0.25); }
+</style>
 </head>
 <body>
+    <header class="hero">
+      <h1 class="hero-title">AFK Hatch Calculator</h1>
+      <p class="hero-sub">Calculate how long you can hatch based on your coins, egg price, hatch speed, and eggs per open.</p>
+    </header>
   <div class="container">
     <div class="top-buttons">
       <button class="small-btn" onclick="savePreset()">Save</button>
@@ -159,22 +169,33 @@
       let tCost = tEggs * ec;
 
       let msg = "Eggs/sec: " + eps.toFixed(2) +
-                "\nEggs/hour: " + formatNum(Math.floor(eph)) +
-                "\nTotal eggs: " + formatNum(Math.floor(tEggs)) +
-                "\nTotal cost: " + formatNum(Math.floor(tCost));
+                "
+Eggs/hour: " + formatNum(Math.floor(eph)) +
+                "
+Total eggs: " + formatNum(Math.floor(tEggs)) +
+                "
+Total cost: " + formatNum(Math.floor(tCost));
 
       let exportTxt = msg;
 
       if (tCost <= c) {
         let hoursLast = c / (eph * ec);
-        msg += "\n\n✔ You have enough!" +
-               "\nYou can AFK for " + hoursLast.toFixed(2) + " hours.";
-        exportTxt += "\nYou can AFK for: " + hoursLast.toFixed(2) + " hours.";
+        msg += "
+
+✔ You have enough!" +
+               "
+You can AFK for " + hoursLast.toFixed(2) + " hours.";
+        exportTxt += "
+You can AFK for: " + hoursLast.toFixed(2) + " hours.";
       } else {
         let hoursLast = c / (eph * ec);
-        msg += "\n\n❌ Not enough." +
-               "\nYou run out after " + hoursLast.toFixed(2) + " hours.";
-        exportTxt += "\nRuns out after: " + hoursLast.toFixed(2) + " hours.";
+        msg += "
+
+❌ Not enough." +
+               "
+You run out after " + hoursLast.toFixed(2) + " hours.";
+        exportTxt += "
+Runs out after: " + hoursLast.toFixed(2) + " hours.";
       }
 
       lastExport = exportTxt;
