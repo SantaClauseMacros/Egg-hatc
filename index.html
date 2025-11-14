@@ -143,14 +143,15 @@
   <script>
     let lastExport = "";
 
+    function el(id) { return document.getElementById(id); }
     function formatNum(n) { return n.toLocaleString(); }
 
     function calculate() {
-      let hs = parseFloat(hatchSpeed.value);
-      let ec = parseFloat(eggCost.value);
-      let c = parseFloat(coins.value);
-      let ephh = parseFloat(eggsPerHatch.value);
-      let hAFK = parseFloat(hoursAFK.value);
+      let hs = parseFloat(el("hatchSpeed").value);
+      let ec = parseFloat(el("eggCost").value);
+      let c = parseFloat(el("coins").value);
+      let ephh = parseFloat(el("eggsPerHatch").value);
+      let hAFK = parseFloat(el("hoursAFK").value);
 
       let eps = ephh / hs;
       let eph = eps * 3600;
@@ -158,38 +159,27 @@
       let tCost = tEggs * ec;
 
       let msg = "Eggs/sec: " + eps.toFixed(2) +
-                "
-Eggs/hour: " + formatNum(Math.floor(eph)) +
-                "
-Total eggs: " + formatNum(Math.floor(tEggs)) +
-                "
-Total cost: " + formatNum(Math.floor(tCost));
+                "\nEggs/hour: " + formatNum(Math.floor(eph)) +
+                "\nTotal eggs: " + formatNum(Math.floor(tEggs)) +
+                "\nTotal cost: " + formatNum(Math.floor(tCost));
 
       let exportTxt = msg;
 
       if (tCost <= c) {
         let hoursLast = c / (eph * ec);
-        msg += "
-
-✔ You have enough!" +
-               "
-You can AFK for " + hoursLast.toFixed(2) + " hours.";
-        exportTxt += "
-You can AFK for: " + hoursLast.toFixed(2) + " hours.";
+        msg += "\n\n✔ You have enough!" +
+               "\nYou can AFK for " + hoursLast.toFixed(2) + " hours.";
+        exportTxt += "\nYou can AFK for: " + hoursLast.toFixed(2) + " hours.";
       } else {
         let hoursLast = c / (eph * ec);
-        msg += "
-
-❌ Not enough." +
-               "
-You run out after " + hoursLast.toFixed(2) + " hours.";
-        exportTxt += "
-Runs out after: " + hoursLast.toFixed(2) + " hours.";
+        msg += "\n\n❌ Not enough." +
+               "\nYou run out after " + hoursLast.toFixed(2) + " hours.";
+        exportTxt += "\nRuns out after: " + hoursLast.toFixed(2) + " hours.";
       }
 
       lastExport = exportTxt;
-      output.innerText = msg;
-      output.classList.add("show");
+      el("output").innerText = msg;
+      el("output").classList.add("show");
     }
 
     function copyResult() {
@@ -199,11 +189,11 @@ Runs out after: " + hoursLast.toFixed(2) + " hours.";
 
     function savePreset() {
       let preset = {
-        hs: hatchSpeed.value,
-        ec: eggCost.value,
-        c: coins.value,
-        eph: eggsPerHatch.value,
-        h: hoursAFK.value
+        hs: el("hatchSpeed").value,
+        ec: el("eggCost").value,
+        c: el("coins").value,
+        eph: el("eggsPerHatch").value,
+        h: el("hoursAFK").value
       };
       localStorage.setItem("afkPreset", JSON.stringify(preset));
       alert("Preset saved!");
@@ -212,11 +202,11 @@ Runs out after: " + hoursLast.toFixed(2) + " hours.";
     function loadPreset() {
       let p = JSON.parse(localStorage.getItem("afkPreset"));
       if (!p) return alert("No preset saved!");
-      hatchSpeed.value = p.hs;
-      eggCost.value = p.ec;
-      coins.value = p.c;
-      eggsPerHatch.value = p.eph;
-      hoursAFK.value = p.h;
+      el("hatchSpeed").value = p.hs;
+      el("eggCost").value = p.ec;
+      el("coins").value = p.c;
+      el("eggsPerHatch").value = p.eph;
+      el("hoursAFK").value = p.h;
       alert("Preset loaded!");
     }
 
